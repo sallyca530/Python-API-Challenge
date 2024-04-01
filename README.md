@@ -1,10 +1,8 @@
-# Python-API-Challenge
-### Python API for Weather and Vacation Planning
+# Python API for Weather and Vacation Planning
 ## Introduction
-**Part 1 -  WeatherPy**: The creation of a Python script to visualize the weather of over 500 cities of varying distances from the equator is outlined. Leveraging the `citipy` Python library, the OpenWeatherMap API (https://openweathermap.org/api), and adept problem-solving skills, a comprehensive model of weather patterns across diverse cities is constructed.
+**Part 1 -  WeatherPy**: The first portion of this project involves the creation of a Python script to visualize the weather of over 500 cities of varying distances from the equator. Leveraging the `citipy` Python library and the OpenWeatherMap API (https://openweathermap.org/api), a comprehensive *model of weather patterns* across diverse cities is constructed.
 
-**Part 2 - VacationPy**: The utilization of weather data skills to strategize future vacations is emphasized. Through the employment of Jupyter notebooks, the `hvPlot` Python library, and the Geoapify API (https://www.geoapify.com/), provides code that streamlines the process by importing required libraries and loading the CSV file containing weather and coordinates data for each city created in *Part 1*.
-Primary objectives involve utilizing the Geoapify API and `hvPlot` Python library showcases proficiency in Python to craft compelling map visualizations that aid in vacation planning.
+**Part 2 - VacationPy**: The primary objective of the second portion of this project involves utilizing the Geoapify API (https://www.geoapify.com/) and `hvPlot` Python library to showcase proficiency in Python to craft compelling map visualizations that aid in *vacation planning*. The code streamlines the process by importing required libraries and loading the CSV file containing weather and coordinate data for each city created in *Part 1*. 
 
 ## Part 1: WeatherPy
 ### Imports
@@ -55,7 +53,7 @@ Primary objectives involve utilizing the Geoapify API and `hvPlot` Python librar
 
     Output: Number of cities in the list: 608
 
-### Use the OpenWeatherMap API to retrieve weather data from the cities list generated in the started code
+### Use the OpenWeatherMap API to retrieve weather data from the cities list generated
 
     # Set the API base URL
     url = "http://api.openweathermap.org/data/2.5/weather?"
@@ -138,18 +136,14 @@ Primary objectives involve utilizing the Geoapify API and `hvPlot` Python librar
 
 **Export data to cvs file**
 
-    # Export the City_Data into a csv
     city_data_df.to_csv("output_data/cities.csv", index_label="City_ID")
 
 **Read saved data back into notebook**
 
-    # Read saved data
     city_data_df = pd.read_csv("output_data/cities.csv", index_col="City_ID")
 
-    # Display sample data
-    city_data_df.head()
 
-### Create Scatter Plots
+## Create Scatter Plots
 
 **Latitude vs. Temperature**
 
@@ -239,7 +233,7 @@ The r-value is: 0.5098241499387984
 
 ![](WeatherPy_main/output_data/temp_vs_lat_southern.png)
 
-**Discussion about the linear relationship:** The linear regression line for temperature vs latitude is negative in the Northern Hemisphere and is positive in the Southern Hemisphere. The correlation factor of in the Northern hemisphere is 0.77 which is considered a strong correlation. The correlation factor in the Southern hemisphere is 0.51 which is considered to be a weak correlation. At the equator, which is latitude of zero, the sun hits the earth in a direst fashion. The sun will cause the temperature to be warmer closer to zero. As the latitude becomes greater, in the Northern Hemisphere, the temperature goes down as it approaches the Arctic Circle. 
+**Discussion about the linear relationship:** The linear regression line for temperature vs latitude is negative in the Northern Hemisphere and is positive in the Southern Hemisphere. The correlation factor of in the Northern hemisphere is 0.77 which is considered a strong correlation. The correlation factor in the Southern hemisphere is 0.51 which is considered to be a weak correlation. At the equator, which is latitude of zero, the sun hits the earth in a direct fashion. The sun will cause the temperature to be warmer when the latitude is closer to zero, which is reflected in the plot. As the latitude becomes greater, in the Northern Hemisphere, the temperature goes down as it approaches the Arctic Circle. 
 
 ### Humidity vs. Latitude 
 
@@ -263,7 +257,7 @@ The r-value is: 0.01447880640915222
 
 ![](WeatherPy_main/output_data/hum_vs_lat_southern.png)
 
-**Discussion about the linear relationship:** The linear regression line for humidity vs latitude is positive in both Northen Hemiphere and Southern Hemisphere. The correlation for both the are below 0.3, which is considered no correlation or very weak.
+**Discussion about the linear relationship:** The linear regression line for humidity vs latitude is positive in both Northen Hemiphere and Southern Hemisphere. The correlation for both hemispheres are below 0.3, which is considered no or very weak correlation.
 
 ### Cloudiness vs. Latitude 
 
@@ -288,9 +282,9 @@ The r-value is: 0.0008701936660440692
 
 ![](WeatherPy_main/output_data/cloud_vs_lat_southern.png)
 
-**Discussion about the linear relationship:** The linear regression line in both the Northern and Southern Hemisphere is positive for cloudiness vs latitude. However, the correlation factor for both hemispheres are below 0.3, which is considered no correlation of very week. 
+**Discussion about the linear relationship:** The linear regression line in both the Northern and Southern Hemisphere is positive for cloudiness vs latitude. However, the correlation factor for both hemispheres is below 0.3, which is considered no or very weak correlation. 
 
-**Conclusion:** The only significant finding in correlation, considering all graphs, is a direct correlation in the Northern Hemisphere of temperature vs. latitude.
+**Conclusion:** The only significant finding in correlation, considering all plots, is a direct correlation in the Northern Hemisphere of Temperature vs. Latitude.
 
 
 ## Part 2: VacationPy
@@ -312,7 +306,7 @@ The r-value is: 0.0008701936660440692
     city_data_df = pd.read_csv("output_data/cities.csv")
 
 
-### Create a map that displays a point for every city in the `city_data_df` DataFrame. The size of the point should be the humidity in each city.
+### Create a map that displays a point for every city in the `city_data_df` DataFrame. The size of the point is the humidity in each city.
 
     # Configure the map plot_1
     map_plot_1 = city_data_df.hvplot.points(
@@ -427,7 +421,7 @@ The r-value is: 0.0008701936660440692
 
 ## Conclusion
 
-The following hotels are available considering the ideal weather conditions of Max Temp > 21C, Max Temp < 27C, Wind Speed < 4.5 m/s, and 0 cloudiness.
+The following hotels are available, considering the ideal weather conditions of Max Temp > 21C, Max Temp < 27C, Wind Speed < 4.5 m/s, and 0 cloudiness.
 
 1. Brak Tourist Hotel (فندق براك السياحي) in Brak, Libya.
 2. Villa Carparis in Rizokarpaso, Cyprus.
