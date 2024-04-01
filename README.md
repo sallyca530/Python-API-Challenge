@@ -420,7 +420,10 @@ The r-value is: 0.0008701936660440692
     # Display the map
     map_plot_2
 
-![](WeatherPy_main/output_data/map_plot_2.png)
+
+*Example of Hover message*
+
+![](WeatherPy_main/output_data/hvplot_hotel.png)
 
 ## Conclusion
 
