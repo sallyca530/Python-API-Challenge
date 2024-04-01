@@ -187,9 +187,110 @@ Sample code for all plots:
 
 ![](WeatherPy_main/output_data/lat_cloud.png)
 
-### Compute Linear Regression for Each Relationship
+## Compute Linear Regression for Each Relationship
 
-### Results
+Define a function to create Linear Regression plots
+
+    def plot_linear_regression(x_values, y_values, title, text_coordinates):
+        
+        # Compute linear regression
+        (slope, intercept, rvalue, pvalue, stderr) = linregress(x_values, y_values)
+        regress_values = x_values * slope + intercept
+        line_eq = "y = " + str(round(slope,2)) + "x + " + str(round(intercept,2))
+
+        # Plot
+        plt.scatter(x_values,y_values)
+        plt.plot(x_values,regress_values,"r-")
+        plt.annotate(line_eq,text_coordinates,fontsize=15,color="red")
+        plt.xlabel("Latitude")
+        plt.ylabel(title)
+        print(f"The r-value is: {rvalue**2}")
+        plt.show()
+
+Create a DataFrame with the Northern Hemisphere data (Latitude >= 0)
+
+    northern_hemi_df = city_data_df.loc[city_data_df["Lat"] >= 0]
+
+Create a DataFrame with the Southern Hemisphere data (Latitude < 0)
+
+    southern_hemi_df = city_data_df.loc[city_data_df["Lat"] < 0]
+
+## Results of Linear Regression 
+
+### Temperature vs. Latitude
+
+Linear regression of *Northern Hemisphere*
+
+    x_values = northern_hemi_df["Lat"]
+    y_values = northern_hemi_df["Max Temp"]
+    plot_linear_regression(x_values, y_values, "Max Temp",(10,-20))
+
+The r-value is: 0.7692858976134047
+
+![](WeatherPy_main/output_data/temp_vs_lat_northern.png)
+
+Linear regression on *Southern Hemisphere*
+
+    x_values = southern_hemi_df["Lat"]
+    y_values = southern_hemi_df["Max Temp"]
+    plot_linear_regression(x_values, y_values, "Max Temp",(-30,5))
+
+The r-value is: 0.5098241499387984
+
+![](WeatherPy_main/output_data/temp_vs_lat_southern.png)
+
+**Discussion about the linear relationship:** The linear regression line for temperature vs latitude is negative in the Northern Hemisphere and is positive in the Southern Hemisphere. The correlation factor of in the Northern hemisphere is 0.77 which is considered a strong correlation. The correlation factor in the Southern hemisphere is 0.51 which is considered to be a weak correlation. At the equator, which is latitude of zero, the sun hits the earth in a direst fashion. The sun will cause the temperature to be warmer closer to zero. As the latitude becomes greater, in the Northern Hemisphere, the temperature goes down as it approaches the Arctic Circle. 
+
+### Humidity vs. Latitude 
+
+Linear regression of *Northern Hemisphere*
+
+    x_values = northern_hemi_df["Lat"]
+    y_values = northern_hemi_df["Humidity"]
+    plot_linear_regression(x_values, y_values, "Humidity",(45,20))
+
+The r-value is: 0.06415513377509181
+
+![](WeatherPy_main/output_data/hum_vs_lat_northern.png)
+
+Linear regression on *Southern Hemisphere*
+
+    x_values = southern_hemi_df["Lat"]
+    y_values = southern_hemi_df["Humidity"]
+    plot_linear_regression(x_values, y_values, "Humidity",(-50,20))
+
+The r-value is: 0.01447880640915222
+
+![](WeatherPy_main/output_data/hum_vs_lat_southern.png)
+
+**Discussion about the linear relationship:** The linear regression line for humidity vs latitude is positive in both Northen Hemiphere and Southern Hemisphere. The correlation for both the are below 0.3, which is considered no correlation or very weak.
+
+### Cloudiness vs. Latitude 
+
+Linear regression of *Northern Hemisphere*
+
+    x_values = northern_hemi_df["Lat"]
+    y_values = northern_hemi_df["Cloudiness"]
+    plot_linear_regression(x_values, y_values, "Cloudiness",(45,25))
+
+The r-value is: 0.011509488974979111
+
+![](WeatherPy_main/output_data/cloud_vs_lat_northern.png)
+
+
+Linear regression on *Southern Hemisphere*
+
+    x_values = southern_hemi_df["Lat"]
+    y_values = southern_hemi_df["Cloudiness"]
+    plot_linear_regression(x_values, y_values, "Cloudiness",(-50,25))
+
+The r-value is: 0.0008701936660440692
+
+![](WeatherPy_main/output_data/cloud_vs_lat_southern.png)
+
+**Discussion about the linear relationship:** The linear regression line in both the Northern and Southern Hemisphere is positive for cloudiness vs latitude. However, the correlation factor for both hemispheres are below 0.3, which is considered no correlation of very week. 
+
+**Conclusion:** The only significant finding in correlation, considering all graphs, is a direct correlation in the Northern Hemisphere of temperature vs. latitude.
 
 
 ## Part 2: VacationPy
@@ -197,17 +298,135 @@ Sample code for all plots:
 
 ### Imports
 
+    # Dependencies and Setup
+    import hvplot.pandas
+    import pandas as pd
+    import requests
+
+    # Import API key
+    from api_key_main import geoapify_key
 
 
-### ETL
+### Load the CSV file created in Part 1 into a Pandas DataFrame
+
+    city_data_df = pd.read_csv("output_data/cities.csv")
 
 
-### Analysis
+### Create a map that displays a point for every city in the `city_data_df` DataFrame. The size of the point should be the humidity in each city.
+
+    # Configure the map plot_1
+    map_plot_1 = city_data_df.hvplot.points(
+        "Lng",
+        "Lat",
+        geo = True,
+        tiles = "OSM",
+        frame_width = 700,
+        frame_height = 500, 
+        size = "Humidity", 
+        scale = 1,
+        color = "City",
+        alpha = 0.5  
+    )
+
+    # Display the map
+    map_plot_1
+
+![](WeatherPy_main/output_data/map_plot_1.png)
+
+
+### Narrow down the `city_data_df` DataFrame to find your ideal weather condition
+
+    # Narrow down cities that fit criteria and drop any results with null values
+    city_ideal_df = city_data_df
+
+    #Ideal conditions Max Temp > 21C, Max Temp < 27C, Wind Speed < 4.5 m/s, and 0 cloudiness
+    city_ideal_df = city_ideal_df.loc[(city_ideal_df["Max Temp"] > 21) & (city_ideal_df["Max Temp"] < 27)]
+    city_ideal_df = city_ideal_df.loc[city_ideal_df["Wind Speed"] < 4.5]
+    city_ideal_df = city_ideal_df.loc[city_ideal_df["Cloudiness"] == 0]
+
+
+    # Drop any rows with null values
+    city_ideal_df = city_ideal_df.dropna()
+
+### Create a new DataFrame called `hotel_df` with ideal conditions (Max Temp > 21C, Max Temp < 27C, Wind Speed < 4.5 m/s, and 0 cloudiness)
+
+    # Use the Pandas copy function to create DataFrame called hotel_df to store the city, country, coordinates, and humidity
+    hotel_df = pd.DataFrame(city_ideal_df, columns = ["City", "Country", "Lat", "Lng", "Humidity", "Hotel Name"])
+
+    # Add an empty column, "Hotel Name," to the DataFrame so you can store the hotel found using the Geoapify API
+    hotel_df["Hotel Name"] = ""
 
 
 
+### For each city, use the Geoapify API to find the first hotel located within 10,000 metres of your coordinates
 
-### Results
+    # Set parameters to search for a hotel
+    radius = 10000 
+    params = {
+            "categories" : "accommodation.hotel",
+            "apiKey" : geoapify_key
+            }
 
+    # Print a message to follow up the hotel search
+    print("Starting hotel search")
+
+    # Iterate through the hotel_df DataFrame
+    for index, row in hotel_df.iterrows():
+        # get latitude, longitude from the DataFrame
+        longitude = row["Lng"]
+        latitude = row["Lat"]
+        # Add filter and bias parameters with the current city's latitude and longitude to the params dictionary
+        params["filter"] =  f"circle:{longitude},{latitude},{radius}"
+        params["bias"] = f"proximity:{longitude},{latitude}"
+        # Set base URL
+        base_url = "https://api.geoapify.com/v2/places"
+        
+        # Make and API request using the params dictionaty
+        name_address = requests.get(base_url, params = params)
+        # Convert the API response to JSON format
+        name_address = name_address.json()
+        
+        # Grab the first hotel from the results and store the name in the hotel_df DataFrame
+        try:
+            hotel_df.loc[index, "Hotel Name"] = name_address["features"][0]["properties"]["name"]
+        except (KeyError, IndexError):
+            # If no hotel is found, set the hotel name as "No hotel found".
+            hotel_df.loc[index, "Hotel Name"] = "No hotel found"    
+        # Log the search results
+        print(f"{hotel_df.loc[index, 'City']} - nearest hotel: {hotel_df.loc[index, 'Hotel Name']}") 
+
+    # Display sample data
+    hotel_df 
+
+![](WeatherPy_main/output_data/hotel_df_output.png)
+
+
+### Add the hotel name and the country as additional information in the hover message for each city in the map
+
+    map_plot_2 = hotel_df.hvplot.points(
+        "Lng",
+        "Lat",
+        geo = True,
+        tiles = "OSM",
+        frame_width = 700,
+        frame_height = 500, 
+        size = "Humidity", 
+        scale = 1,
+        color = "City",
+        hover_cols = ["Hotel Name", "Country"],
+        alpha = 0.5  
+    )
+
+    # Display the map
+    map_plot_2
+
+![](WeatherPy_main/output_data/map_plot_2.png)
 
 ## Conclusion
+
+The following hotels are available considering the ideal weather conditions of Max Temp > 21C, Max Temp < 27C, Wind Speed < 4.5 m/s, and 0 cloudiness.
+
+1. Brak Tourist Hotel (فندق براك السياحي) in Brak, Libya.
+2. Villa Carparis in Rizokarpaso, Cyprus.
+3. Pousada Vitória in Sao Vicente, Brazil.
+4. Muscat International Hotel in Salalah, Oman.
